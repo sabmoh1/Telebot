@@ -20,7 +20,7 @@ def run_flask():
 # /acc Command
 async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        await update.message.reply_text("⏳ **GETTING INFORMATION... 🔄**")
+        await update.message.reply_text("⏳ **𝗚𝗘𝗧𝗧𝗜𝗡𝗚 𝗜𝗡𝗙𝗢𝗥𝗠𝗔𝗧𝗜𝗢𝗡... 🔄**")
 
         region = context.args[0]
         uid = context.args[1]
@@ -38,7 +38,7 @@ async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             created_at = datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d")
 
             reply_text = (
-                f"👤 **ACCOUNT INFORMATION**\n\n"
+                f"👤 **𝗔𝗖𝗖𝗢𝗨𝗡𝗧 𝗜𝗡𝗙𝗢𝗥𝗠𝗔𝗧𝗜𝗢𝗡**\n\n"
                 f"🆔 **UID:** `{basic_info.get('accountId', 'N/A')}`\n"
                 f"🔹 **Name:** `{basic_info.get('nickname', 'N/A')}`\n"
                 f"🏅 **Level:** `{basic_info.get('level', 'N/A')}`\n"
@@ -64,7 +64,7 @@ async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # /bnr Command
 async def bnr_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        await update.message.reply_text("⏳ **GENERATING IMAGE... 🔄**")
+        await update.message.reply_text("⏳ **𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗜𝗡𝗚 𝗜𝗠𝗔𝗚𝗘... 🔄**")
 
         region = context.args[0]
         uid = context.args[1]
@@ -79,7 +79,7 @@ async def bnr_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # /fit Command
 async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        await update.message.reply_text("⏳ **GENERATING IMAGE... 🔄**")
+        await update.message.reply_text("⏳ **𝗚𝗘𝗡𝗘𝗥𝗔𝗧𝗜𝗡𝗚 𝗜𝗠𝗔𝗚𝗘... 🔄**")
 
         region = context.args[0]
         uid = context.args[1]
@@ -93,11 +93,9 @@ async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Main
 async def main():
-    # Run Flask
     flask_thread = Thread(target=run_flask)
     flask_thread.start()
 
-    # Run Bot
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("acc", acc_command))
     app.add_handler(CommandHandler("bnr", bnr_command))
