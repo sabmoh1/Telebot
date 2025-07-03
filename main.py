@@ -5,7 +5,7 @@ from datetime import datetime
 from aiohttp import web
 import asyncio
 
-BOT_TOKEN = "8112079218:AAGecPeZiF1uelQ3SIPRf64W8EE7OjplBzs"
+BOT_TOKEN = "7995991963:AAET2Rbn8Kky3Rdmls5RrwQNGyY8TcEEr60"
 
 # Telegram Commands
 async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
