@@ -4,6 +4,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import requests
 from datetime import datetime
+import asyncio
 
 BOT_TOKEN = "7995991963:AAET2Rbn8Kky3Rdmls5RrwQNGyY8TcEEr60"
 
@@ -21,14 +22,21 @@ def run_flask():
 async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) < 2:
         await update.message.reply_text(
-            "⚠️ Use the command like this:\n/acc sg 12345678"
+            "⚠️ Use the command like this:\n/acc sg 12345678",
+            reply_to_message_id=update.message.message_id
         )
         return
     region = context.args[0]
     uid = context.args[1]
-    await update.message.reply_text("⏳ *GETTING INFORMATION...*", parse_mode="Markdown")
+    wait_message = await update.message.reply_text(
+        "⏳ *GETTING INFORMATION...*",
+        parse_mode="Markdown",
+        reply_to_message_id=update.message.message_id
+    )
     url = f"https://aditya-info-v11op.onrender.com/player-info?uid={uid}&region={region}"
     response = requests.get(url)
+    await asyncio.sleep(1)
+    await wait_message.delete()
     if response.status_code == 200:
         json_data = response.json()
         basic_info = json_data["player_info"]["basicInfo"]
@@ -61,33 +69,45 @@ async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def bnr_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) < 2:
         await update.message.reply_text(
-            "⚠️ Use the command like this:\n/bnr sg 12345678"
+            "⚠️ Use the command like this:\n/bnr sg 12345678",
+            reply_to_message_id=update.message.message_id
         )
         return
     region = context.args[0]
     uid = context.args[1]
-    await update.message.reply_text("⏳ *GENERATING IMAGE...*", parse_mode="Markdown")
+    wait_message = await update.message.reply_text(
+        "⏳ *GENERATING IMAGE...*",
+        parse_mode="Markdown",
+        reply_to_message_id=update.message.message_id
+    )
+    await asyncio.sleep(1)
+    await wait_message.delete()
     url = f"https://aditya-banner-v11op.onrender.com/banner-image?uid={uid}&region={region}"
     await update.message.reply_photo(url)
 
 async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) < 2:
         await update.message.reply_text(
-            "⚠️ Use the command like this:\n/fit sg 12345678"
+            "⚠️ Use the command like this:\n/fit sg 12345678",
+            reply_to_message_id=update.message.message_id
         )
         return
     region = context.args[0]
     uid = context.args[1]
-    await update.message.reply_text("⏳ *GENERATING IMAGE...*", parse_mode="Markdown")
+    wait_message = await update.message.reply_text(
+        "⏳ *GENERATING IMAGE...*",
+        parse_mode="Markdown",
+        reply_to_message_id=update.message.message_id
+    )
+    await asyncio.sleep(1)
+    await wait_message.delete()
     url = f"https://aditya-outfit-v11op.onrender.com/outfit-image?uid={uid}&region={region}"
     await update.message.reply_photo(url)
 
 def main():
-    # Start Flask in background
     flask_thread = Thread(target=run_flask)
     flask_thread.start()
 
-    # Start Telegram bot
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("acc", acc_command))
     app.add_handler(CommandHandler("bnr", bnr_command))
