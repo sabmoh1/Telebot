@@ -3,7 +3,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import requests
 from datetime import datetime
 
-BOT_TOKEN = "7207530075:AAFWOBXwp-7CE3sY-Wf6zrMqdfnHj6GIocA"
+BOT_TOKEN = "8112079218:AAGecPeZiF1uelQ3SIPRf64W8EE7OjplBzs"
 
 async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
