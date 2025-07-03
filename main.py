@@ -1,9 +1,9 @@
-import asyncio
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import requests
 from datetime import datetime
 from aiohttp import web
+import asyncio
 
 BOT_TOKEN = "8112079218:AAGecPeZiF1uelQ3SIPRf64W8EE7OjplBzs"
 
@@ -73,27 +73,37 @@ async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "`/fit br 12345678`", parse_mode="Markdown"
         )
 
-# Web route to keep Render alive
+# Web route
 async def web_handler(request):
     return web.Response(text="✅ البوت يعمل... السلام عليكم")
 
-async def main():
-    # Telegram Bot setup
+# Main function
+def main():
+    # Telegram bot
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("acc", acc_command))
     app.add_handler(CommandHandler("bnr", bnr_command))
     app.add_handler(CommandHandler("fit", fit_command))
-    print("✅ البوت شغّال بالأوامر")
+    print("✅ البوت شغال بالأوامر")
 
-    # Web server setup using aiohttp
-    runner = web.AppRunner(web.Application())
-    runner.app.router.add_get("/", web_handler)
-    await runner.setup()
+    # aiohttp server
+    web_app = web.Application()
+    web_app.router.add_get("/", web_handler)
+    runner = web.AppRunner(web_app)
+
+    # Event loop
+    loop = asyncio.get_event_loop()
+
+    # Start aiohttp
+    loop.run_until_complete(runner.setup())
     site = web.TCPSite(runner, "0.0.0.0", 10000)
-    await site.start()
+    loop.run_until_complete(site.start())
 
-    # Run Telegram polling
-    await app.run_polling()
+    # Start bot polling
+    loop.create_task(app.run_polling())
+
+    # Keep running forever
+    loop.run_forever()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
