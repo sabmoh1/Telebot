@@ -1,20 +1,23 @@
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    ContextTypes,
+)
 import requests
 from datetime import datetime
 import asyncio
 
 BOT_TOKEN = "7995991963:AAET2Rbn8Kky3Rdmls5RrwQNGyY8TcEEr60"
 
-# Command: /acc
+# /acc command
 async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         msg = await update.message.reply_text(
             "⏳ *GETTING INFORMATION...* 🔄",
             parse_mode="Markdown",
-            reply_to_message_id=update.message.message_id
+            reply_to_message_id=update.message.message_id,
         )
-
         await asyncio.sleep(1)
         await msg.delete()
         await asyncio.sleep(3)
@@ -47,28 +50,31 @@ async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"🎯 *CS Rank:* `{basic_info.get('csRank', 'N/A')}`\n"
                 f"👥 *Guild:* `{clan_info.get('clanName', 'None')}`\n"
                 f"🔢 *Members:* `{clan_info.get('memberNum', '0')}`\n"
-                f"📝 *Bio:*\n`{social_info.get('signature', 'N/A')}`"
+                f"📝 *Bio:* `{social_info.get('signature', 'N/A')}`"
             )
-            await update.message.reply_text(reply_text, parse_mode="Markdown", reply_to_message_id=update.message.message_id)
+            await update.message.reply_text(
+                reply_text, parse_mode="Markdown", reply_to_message_id=update.message.message_id
+            )
         else:
-            await update.message.reply_text("❌ Failed to fetch account data.", reply_to_message_id=update.message.message_id)
-
+            await update.message.reply_text(
+                "❌ Failed to fetch account data.",
+                reply_to_message_id=update.message.message_id,
+            )
     except Exception:
         await update.message.reply_text(
             "⚠️ Use the command like this:\n`/acc sg 12345678`",
             parse_mode="Markdown",
-            reply_to_message_id=update.message.message_id
+            reply_to_message_id=update.message.message_id,
         )
 
-# Command: /bnr
+# /bnr command
 async def bnr_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         msg = await update.message.reply_text(
             "⏳ *GENERATING IMAGE...* 🔄",
             parse_mode="Markdown",
-            reply_to_message_id=update.message.message_id
+            reply_to_message_id=update.message.message_id,
         )
-
         await asyncio.sleep(1)
         await msg.delete()
         await asyncio.sleep(3)
@@ -77,23 +83,21 @@ async def bnr_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         uid = context.args[1]
         url = f"https://aditya-banner-v11op.onrender.com/banner-image?uid={uid}&region={region}"
         await update.message.reply_photo(url, reply_to_message_id=update.message.message_id)
-
     except Exception:
         await update.message.reply_text(
             "⚠️ Use the command like this:\n`/bnr sg 12345678`",
             parse_mode="Markdown",
-            reply_to_message_id=update.message.message_id
+            reply_to_message_id=update.message.message_id,
         )
 
-# Command: /fit
+# /fit command
 async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         msg = await update.message.reply_text(
             "⏳ *GENERATING IMAGE...* 🔄",
             parse_mode="Markdown",
-            reply_to_message_id=update.message.message_id
+            reply_to_message_id=update.message.message_id,
         )
-
         await asyncio.sleep(1)
         await msg.delete()
         await asyncio.sleep(3)
@@ -102,23 +106,19 @@ async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         uid = context.args[1]
         url = f"https://aditya-outfit-v11op.onrender.com/outfit-image?uid={uid}&region={region}"
         await update.message.reply_photo(url, reply_to_message_id=update.message.message_id)
-
     except Exception:
         await update.message.reply_text(
             "⚠️ Use the command like this:\n`/fit sg 12345678`",
             parse_mode="Markdown",
-            reply_to_message_id=update.message.message_id
+            reply_to_message_id=update.message.message_id,
         )
 
-# Main
-async def main():
+if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("acc", acc_command))
     app.add_handler(CommandHandler("bnr", bnr_command))
     app.add_handler(CommandHandler("fit", fit_command))
 
     print("✅ Bot is running with commands /acc /bnr /fit")
-    await app.run_polling()
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    # لا تستعمل asyncio.run()
+    app.run_polling()
