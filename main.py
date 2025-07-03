@@ -1,3 +1,6 @@
+from flask import Flask
+from threading import Thread
+
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -9,6 +12,16 @@ from datetime import datetime
 import asyncio
 
 BOT_TOKEN = "7995991963:AAET2Rbn8Kky3Rdmls5RrwQNGyY8TcEEr60"
+
+# Flask app لفتح منفذ وهمي
+app_flask = Flask(__name__)
+
+@app_flask.route("/")
+def index():
+    return "Bot is running."
+
+def run_flask():
+    app_flask.run(host="0.0.0.0", port=10000)
 
 # /acc command
 async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -114,11 +127,14 @@ async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 if __name__ == "__main__":
+    # شغل Flask في Thread منفصل
+    flask_thread = Thread(target=run_flask)
+    flask_thread.start()
+
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("acc", acc_command))
     app.add_handler(CommandHandler("bnr", bnr_command))
     app.add_handler(CommandHandler("fit", fit_command))
 
     print("✅ Bot is running with commands /acc /bnr /fit")
-    # لا تستعمل asyncio.run()
     app.run_polling()
