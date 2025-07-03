@@ -1,5 +1,3 @@
-from flask import Flask
-from threading import Thread
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import requests
@@ -8,31 +6,17 @@ import asyncio
 
 BOT_TOKEN = "7995991963:AAET2Rbn8Kky3Rdmls5RrwQNGyY8TcEEr60"
 
-# Flask Web Server
-app_web = Flask(__name__)
-
-@app_web.route("/")
-def index():
-    return "السلام عليكم، البوت يعمل ✅"
-
-def run_flask():
-    app_web.run(host="0.0.0.0", port=10000)
-
-# Telegram Commands
+# Command: /acc
 async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        # الرد برسالة جاري الحصول على المعلومات
         msg = await update.message.reply_text(
             "⏳ *GETTING INFORMATION...* 🔄",
             parse_mode="Markdown",
             reply_to_message_id=update.message.message_id
         )
 
-        # حذف الرسالة بعد ثانية
         await asyncio.sleep(1)
         await msg.delete()
-
-        # الانتظار 3 ثواني إضافية
         await asyncio.sleep(3)
 
         region = context.args[0]
@@ -76,6 +60,7 @@ async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_to_message_id=update.message.message_id
         )
 
+# Command: /bnr
 async def bnr_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         msg = await update.message.reply_text(
@@ -100,6 +85,7 @@ async def bnr_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_to_message_id=update.message.message_id
         )
 
+# Command: /fit
 async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         msg = await update.message.reply_text(
@@ -124,10 +110,8 @@ async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_to_message_id=update.message.message_id
         )
 
+# Main
 async def main():
-    flask_thread = Thread(target=run_flask)
-    flask_thread.start()
-
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("acc", acc_command))
     app.add_handler(CommandHandler("bnr", bnr_command))
