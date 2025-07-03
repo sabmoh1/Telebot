@@ -1,10 +1,24 @@
+from flask import Flask, render_template
+from threading import Thread
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import requests
 from datetime import datetime
+import asyncio
 
 BOT_TOKEN = "8112079218:AAGecPeZiF1uelQ3SIPRf64W8EE7OjplBzs"
 
+# Flask Web Server
+app_web = Flask(__name__)
+
+@app_web.route("/")
+def index():
+    return render_template("index.html")
+
+def run_flask():
+    app_web.run(host="0.0.0.0", port=10000)
+
+# Telegram Commands
 async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         region = context.args[0]
@@ -43,7 +57,7 @@ async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception:
         await update.message.reply_text(
             "⚠️ تأكد من كتابة الأمر هكذا:\n"
-            "`/acc me 12345678`", parse_mode="Markdown"
+            "`/acc sg 12345678`", parse_mode="Markdown"
         )
 
 async def bnr_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -70,16 +84,20 @@ async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "`/fit br 12345678`", parse_mode="Markdown"
         )
 
-def main():
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
+async def main():
+    # شغّل Flask في Thread منفصل
+    flask_thread = Thread(target=run_flask)
+    flask_thread.start()
 
+    # شغّل البوت
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("acc", acc_command))
     app.add_handler(CommandHandler("bnr", bnr_command))
     app.add_handler(CommandHandler("fit", fit_command))
 
-    print("✅ البوت يعمل الآن بالأوامر /acc /bnr /fit")
+    print("✅ البوت يعمل الآن مع واجهة الويب")
 
-    app.run_polling()
+    await app.run_polling()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
