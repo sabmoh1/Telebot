@@ -70,7 +70,7 @@ async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "`/fit br 12345678`", parse_mode="Markdown"
         )
 
-async def main():
+def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("acc", acc_command))
@@ -79,8 +79,7 @@ async def main():
 
     print("✅ البوت يعمل الآن بالأوامر /acc /bnr /fit")
 
-    await app.run_polling()
+    app.run_polling()
 
 if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+    main()
