@@ -6,7 +6,7 @@ import requests
 from datetime import datetime
 import asyncio
 
-BOT_TOKEN = "ضع_هنا_توكن_البوت_الجديد"
+BOT_TOKEN = "7995991963:AAET2Rbn8Kky3Rdmls5RrwQNGyY8TcEEr60"
 
 # Flask Web Server
 app_web = Flask(__name__)
