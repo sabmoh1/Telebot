@@ -4,7 +4,6 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import requests
 from datetime import datetime
-import asyncio
 
 BOT_TOKEN = "8112079218:AAGecPeZiF1uelQ3SIPRf64W8EE7OjplBzs"
 
@@ -13,7 +12,7 @@ app_web = Flask(__name__)
 
 @app_web.route("/")
 def index():
-    return render_template("index.html")
+    return "<h1>السلام عليكم 🌸 البوت يعمل الآن!</h1>"
 
 def run_flask():
     app_web.run(host="0.0.0.0", port=10000)
@@ -84,20 +83,17 @@ async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "`/fit br 12345678`", parse_mode="Markdown"
         )
 
-async def main():
-    # شغّل Flask في Thread منفصل
-    flask_thread = Thread(target=run_flask)
-    flask_thread.start()
-
-    # شغّل البوت
+def start_bot():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("acc", acc_command))
     app.add_handler(CommandHandler("bnr", bnr_command))
     app.add_handler(CommandHandler("fit", fit_command))
-
-    print("✅ البوت يعمل الآن مع واجهة الويب")
-
-    await app.run_polling()
+    print("✅ البوت يعمل الآن بالأوامر /acc /bnr /fit")
+    app.run_polling()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # Flask Thread
+    flask_thread = Thread(target=run_flask)
+    flask_thread.start()
+    # Telegram bot
+    start_bot()
