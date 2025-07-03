@@ -1,21 +1,11 @@
-from flask import Flask, render_template
-from threading import Thread
+import asyncio
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import requests
 from datetime import datetime
+from aiohttp import web
 
 BOT_TOKEN = "8112079218:AAGecPeZiF1uelQ3SIPRf64W8EE7OjplBzs"
-
-# Flask Web Server
-app_web = Flask(__name__)
-
-@app_web.route("/")
-def index():
-    return "<h1>السلام عليكم 🌸 البوت يعمل الآن!</h1>"
-
-def run_flask():
-    app_web.run(host="0.0.0.0", port=10000)
 
 # Telegram Commands
 async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -83,17 +73,27 @@ async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "`/fit br 12345678`", parse_mode="Markdown"
         )
 
-def start_bot():
+# Web route to keep Render alive
+async def web_handler(request):
+    return web.Response(text="✅ البوت يعمل... السلام عليكم")
+
+async def main():
+    # Telegram Bot setup
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("acc", acc_command))
     app.add_handler(CommandHandler("bnr", bnr_command))
     app.add_handler(CommandHandler("fit", fit_command))
-    print("✅ البوت يعمل الآن بالأوامر /acc /bnr /fit")
-    app.run_polling()
+    print("✅ البوت شغّال بالأوامر")
+
+    # Web server setup using aiohttp
+    runner = web.AppRunner(web.Application())
+    runner.app.router.add_get("/", web_handler)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", 10000)
+    await site.start()
+
+    # Run Telegram polling
+    await app.run_polling()
 
 if __name__ == "__main__":
-    # Flask Thread
-    flask_thread = Thread(target=run_flask)
-    flask_thread.start()
-    # Telegram bot
-    start_bot()
+    asyncio.run(main())
