@@ -2,7 +2,6 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import requests
 from datetime import datetime
-import asyncio
 
 BOT_TOKEN = "7207530075:AAFWOBXwp-7CE3sY-Wf6zrMqdfnHj6GIocA"
 
@@ -80,12 +79,8 @@ async def main():
 
     print("✅ البوت يعمل الآن بالأوامر /acc /bnr /fit")
 
-    await app.initialize()
-    await app.start()
-    await app.updater.start_polling()
-
-    # ابقِ البوت شغال
-    await asyncio.Event().wait()
+    await app.run_polling()
 
 if __name__ == "__main__":
+    import asyncio
     asyncio.run(main())
