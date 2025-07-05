@@ -1,6 +1,3 @@
-from flask import Flask
-from threading import Thread
-
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -11,17 +8,7 @@ import requests
 from datetime import datetime
 import asyncio
 
-BOT_TOKEN = "7995991963:AAET2Rbn8Kky3Rdmls5RrwQNGyY8TcEEr60"
-
-# Flask app لفتح منفذ وهمي
-app_flask = Flask(__name__)
-
-@app_flask.route("/")
-def index():
-    return "Bot is running."
-
-def run_flask():
-    app_flask.run(host="0.0.0.0", port=10000)
+BOT_TOKEN = "8112079218:AAGecPeZiF1uelQ3SIPRf64W8EE7OjplBzs"
 
 # /acc command
 async def acc_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -126,15 +113,58 @@ async def fit_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_to_message_id=update.message.message_id,
         )
 
-if __name__ == "__main__":
-    # شغل Flask في Thread منفصل
-    flask_thread = Thread(target=run_flask)
-    flask_thread.start()
+# /ban command
+async def ban_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        msg = await update.message.reply_text(
+            "⏳ *CHECKING BAN STATUS...* 🔄",
+            parse_mode="Markdown",
+            reply_to_message_id=update.message.message_id,
+        )
+        await asyncio.sleep(1)
+        await msg.delete()
+        await asyncio.sleep(3)
 
+        uid = context.args[0]
+        url = f"https://api-check-ban.vercel.app/check_ban/{uid}"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            json_data = response.json()
+            data = json_data["data"]
+
+            is_banned = data.get("is_banned", 0)
+            ban_status = "Banned" if is_banned == 1 else "Not Banned"
+
+            reply_text = (
+                f"👤 *Ban Check Result*\n\n"
+                f"🔹 *Name:* `{data.get('nickname', 'N/A')}`\n"
+                f"🌍 *Region:* `{data.get('region', 'N/A')}`\n"
+                f"🆔 *UID:* `{data.get('id', 'N/A')}`\n"
+                f"🚫 *Ban Status:* {ban_status}\n"
+                f"📌 *Contact:* @RAZOR_ZR"
+            )
+            await update.message.reply_text(
+                reply_text, parse_mode="Markdown", reply_to_message_id=update.message.message_id
+            )
+        else:
+            await update.message.reply_text(
+                "❌ Failed to fetch ban information.",
+                reply_to_message_id=update.message.message_id,
+            )
+    except Exception:
+        await update.message.reply_text(
+            "⚠️ Use the command like this:\n`/ban 12345678`",
+            parse_mode="Markdown",
+            reply_to_message_id=update.message.message_id,
+        )
+
+if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("acc", acc_command))
     app.add_handler(CommandHandler("bnr", bnr_command))
     app.add_handler(CommandHandler("fit", fit_command))
+    app.add_handler(CommandHandler("ban", ban_command))
 
-    print("✅ Bot is running with commands /acc /bnr /fit")
+    print("✅ Bot is running with commands /acc /bnr /fit /ban")
     app.run_polling()
